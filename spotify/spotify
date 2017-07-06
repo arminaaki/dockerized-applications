@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+if [ ! "$(docker ps -qaf 'name=spotify')" ]; then
+
+	xhost +local:docker
+	docker run --rm \
+		--env=DISPLAY=$DISPLAY \
+	        --device /dev/snd:/dev/snd \
+                --volume=/run/user/$(id -u)/pulse:/run/pulse:ro \
+		--volume=/tmp/.X11-unix:/tmp/.X11-unix:ro \
+                --volume=/dev/shm:/dev/shm \
+                --volume=/var/lib/dbus:/var/lib/dbus \
+                --volume=/etc/machine-id:/etc/machine-id \
+                --volume=$HOME/.dockerapps/spotifyconfig/.cache:/root/.cache \
+                --volume=$HOMe/.dockerapps/spotifyconfig/.config/:/root/.config \
+		--name spotify \
+		spotify
+  else
+        docker restart spotify
+
+fi
