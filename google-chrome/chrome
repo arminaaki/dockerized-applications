@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+if [ ! "$(docker ps -qaf 'name=chrome')" ]; then
+
+	xhost +local:docker
+	docker run --rm \
+		--env=DISPLAY=$DISPLAY \
+	        --device /dev/snd:/dev/snd \
+                --volume=/run/user/$(id -u)/pulse:/run/pulse:ro \
+		--volume=/tmp/.X11-unix:/tmp/.X11-unix:ro \
+                --volume=/dev/shm:/dev/shm \
+                --volume=/var/lib/dbus:/var/lib/dbus \
+                --volume=/etc/machine-id:/etc/machine-id \
+                --volume=$HOME/.dockerapps/chrome-config:/home/chrome \
+                --volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro \
+		--security-opt seccomp:unconfined \
+                --name chrome \
+		chrome
+  else
+        docker restart chrome
+
+fi
